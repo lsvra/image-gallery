@@ -1,0 +1,21 @@
+/* 
+  Localizable.strings
+  ImageGallery
+
+  Created by Luís Vieira on 04/11/2018.
+  Copyright © 2018 Luís Vieira. All rights reserved.
+*/
+
+//General
+"app_name" = "ImageList";
+"table_empty" = "The table is empty.";
+
+//Errors
+"error_title" = "Error";
+
+"error_response" = "An error has occurred";
+"error_url_request" = "The request has failed";
+"error_json" = "Error while parsing the response";
+"error_no_connection" = "No network connection available";
+
+"error_action_ok" = "Ok";
