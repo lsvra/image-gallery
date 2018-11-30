@@ -6,12 +6,18 @@
 //  Copyright © 2018 Luís Vieira. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 extension ImageListView: UICollectionViewDataSourcePrefetching {
 
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        presenter?.validatePrefetch(indexPaths: indexPaths)
+        
+        let threshold: Int = 20
+        
+        if let lastIndex = indexPaths.first?.item {
+            if lastIndex + threshold >= images.count {
+                presenter?.showImageListNextPage()
+            }
+        }
     }
 }

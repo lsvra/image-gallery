@@ -19,8 +19,8 @@ protocol ImageListViewProtocol: class {
 
     var presenter: ImageListPresenterProtocol?      { get set }
     
-    func displayImageList(dataSource: UICollectionViewDataSource)
-    func updateImageList()
+    func displayImageList(images: [ImageReference])
+    func updateImageList(images: [ImageReference])
     
     func displayError(title: String, message: String)
 
@@ -34,17 +34,17 @@ protocol ImageListPresenterProtocol: class {
     var router: ImageListRouterProtocol?            { get set }
     
     func showImageList(tag: String)
+    func showImageListNextPage()
     func showSingleImage(index: Int)
-    func validatePrefetch(indexPaths: [IndexPath])
 }
 
 //MARK: Presenter Output
 protocol ImageListOutputProtocol: class {
     
-    func presentImageList(images: [SizesObject])
-    func updateImageList(images: [SizesObject])
+    func presentImageList(page: PageEntity)
+    func updateImageList(page: PageEntity)
     
-    func presentError(error: NSError)
+    func presentError(error: Error)
 }
 
 //MARK: Interactor

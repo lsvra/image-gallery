@@ -21,18 +21,18 @@ class SingleImageInteractor {
 extension SingleImageInteractor: SingleImageInteractorProtocol {
     
     func requestImage() {
-        RequestsManager.shared.getImage(imageUrl, completion: { data, error in
-            
-            if let error = error {
-                self.output?.presentError(error: error)
-                return
-            }
-            
-            guard let data = data else {
-                return
-            }
-            
-            self.output?.presentImage(data: data)
-        })
+//        RequestsManager.shared.getImage(imageUrl, completion: { data, error in
+//            
+//            if let error = error {
+//                self.output?.presentError(error: error)
+//                return
+//            }
+//            
+//            guard let data = data else {
+//                return
+//            }
+//            
+//            self.output?.presentImage(data: data)
+//        })
     }
 }

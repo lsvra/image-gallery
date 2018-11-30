@@ -13,54 +13,45 @@ class ImageListPresenter {
     weak var view: ImageListViewProtocol?
     var interactor: ImageListInteractorProtocol?
     var router: ImageListRouterProtocol?
-
-    var dataSource = ImageListDataSource()
-    
 }
 
-extension ImageListPresenter: ImageListPresenterProtocol{
+extension ImageListPresenter: ImageListPresenterProtocol {
 
     func showImageList(tag: String) {
         interactor?.requestImageList(tag: tag)
     }
     
-    func showSingleImage(index: Int) {
-        
-        if let urlString = dataSource.images[index].size?.last?.source {
-            router?.openSingleImage(urlString: urlString)
-        }
+    func showImageListNextPage() {
+        interactor?.requestNextPage()
     }
     
-    func validatePrefetch(indexPaths: [IndexPath]) {
-        let threshold: Int = 20
+    func showSingleImage(index: Int) {
         
-        if let lastIndex = indexPaths.last?.item {
-            if lastIndex + threshold >= dataSource.images.count {
-                interactor?.requestNextPage()
-            }
-        }
-        
+//        if let urlString = dataSource.images[index].size?.last?.source {
+//            router?.openSingleImage(urlString: urlString)
+//        }
     }
 }
 
 extension ImageListPresenter: ImageListOutputProtocol{
     
-    func presentImageList(images: [SizesObject]) {
+    func presentImageList(page: PageEntity) {
         
-        dataSource.images = images
-        view?.displayImageList(dataSource: dataSource)
+        let imagesArray: [ImageReference] = page.photos.photo
+        
+        view?.displayImageList(images: imagesArray)
     }
     
-    func updateImageList(images: [SizesObject]) {
+    func updateImageList(page: PageEntity) {
+        let imagesArray: [ImageReference] = page.photos.photo
         
-        dataSource.images.append(contentsOf: images)
-        view?.updateImageList()
+        view?.updateImageList(images: imagesArray)
     }
     
-    func presentError(error: NSError) {
+    func presentError(error: Error) {
         
         let title: String = "error_title".overrideLocalizedString()
-        let message: String = error.localizedFailureReason?.overrideLocalizedString() ?? ""
+        let message: String = error.localizedDescription
         
         view?.displayError(title: title, message: message)
     }

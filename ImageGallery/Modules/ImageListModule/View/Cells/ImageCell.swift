@@ -11,72 +11,38 @@ import UIKit
 
 class ImageCell: UICollectionViewCell {
     
-    @IBOutlet weak var imageView: UIImageView!
+    var imageView: UIImageView!
     
     static let reuseIdentifier: String = "ImageCell"
-    static let nibName: String = "ImageCell"
     
-    var loader: UIView? = nil
-    let viewModel: ImageCellViewModel = ImageCellViewModel()
+    var url = ""
     
-    func setup(image: SizesObject){
-        
-        guard let imageSizes = image.size, !imageSizes.isEmpty else {
-            return
-        }
-        
-        setupViewModelListeners()
-        
-        let imageToUse = imageSizes.filter({ $0.label == "Large Square"}).first
-        
-        if let source = imageToUse?.source {
-            imageView.image = nil
-            showLoader()
-            viewModel.setImage(from: source)
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViewModelListeners() {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
-        viewModel.setImage = { [weak self] image in
-            self?.hideLoader()
-            self?.imageView.image = image
-        }
+        imageView = UIImageView(frame: bounds)
+        
+        contentView.addSubview(imageView)
     }
     
-    //MARK: Loaders
-    func showLoader() {
+    override func prepareForReuse() {
+        super.prepareForReuse()
         
-        loader = UIView(frame: self.bounds)
-        
-        guard let loader = loader else {
-            return
-        }
-        
-        let activityIndicator = UIActivityIndicatorView(style: .gray)
-        
-        activityIndicator.startAnimating()
-        activityIndicator.center = loader.center
-        
-        DispatchQueue.main.async {
-            
-            if loader == self.loader {
-                loader.addSubview(activityIndicator)
-                self.addSubview(loader)
-            }
-        }
+        imageView.image = nil
     }
     
-    func hideLoader() {
-        guard let loader = loader else {
+    func setup(data: Data){
+        
+        guard let image = UIImage(data: data) else {
             return
         }
         
         DispatchQueue.main.async {
-            
-            if loader == self.loader {
-                loader.removeFromSuperview()
-            }
+            self.imageView.image = image
         }
     }
 }
