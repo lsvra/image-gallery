@@ -14,6 +14,7 @@ class ImageListInteractor {
     
     private var page: Int = 1
     private var tag: String = ""
+    let loadingQueue = OperationQueue()
 }
 
 extension ImageListInteractor: ImageListInteractorProtocol {
@@ -23,29 +24,74 @@ extension ImageListInteractor: ImageListInteractorProtocol {
         self.tag = tag
         page = 1
         
-        RequestsManager.shared.getPage(tag, page, completion: {images, error in
+        let endpoint = Endpoint.search(for: tag, page: String(describing: page))
+        
+        guard let url = endpoint.url else {
+            return
+        }
+        
+        let dataLoader = DataLoadOperation(url: url, session: .shared)
+        
+        dataLoader.completion = { [weak self] data, response, error in
+            
+            guard let self = self else {
+                return
+            }
             
             if let error = error {
                 self.output?.presentError(error: error)
                 return
             }
             
-            self.output?.presentImageList(images: images)
-        })
+            if let data = data {
+                do {
+                    let result = try JSONDecoder().decode(PageEntity.self, from: data)
+                    self.output?.presentImageList(page: result)
+                    
+                } catch let error {
+                    self.output?.presentError(error: error)
+                    return
+                }
+            }
+        }
+        
+        loadingQueue.addOperation(dataLoader)
     }
     
     func requestNextPage() {
         page = page + 1
         
-        RequestsManager.shared.getPage(tag, page, completion: {images, error in
+        let endpoint = Endpoint.search(for: tag, page: String(describing: page))
+
+        guard let url = endpoint.url else {
+            return
+        }
+        
+        let dataLoader = DataLoadOperation(url: url, session: .shared)
+        
+        dataLoader.completion = { [weak self] data, response, error in
+            
+            guard let self = self else {
+                return
+            }
             
             if let error = error {
                 self.output?.presentError(error: error)
                 return
             }
             
-            self.output?.updateImageList(images: images)
-        })
+            if let data = data {
+                do {
+                    let result = try JSONDecoder().decode(PageEntity.self, from: data)
+                    self.output?.updateImageList(page: result)
+                    
+                } catch let error {
+                    self.output?.presentError(error: error)
+                    return
+                }
+            }
+        }
+
+        loadingQueue.addOperation(dataLoader)
     }
-    
 }

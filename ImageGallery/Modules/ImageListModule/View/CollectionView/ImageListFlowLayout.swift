@@ -6,7 +6,6 @@
 //  Copyright © 2018 Luís Vieira. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 extension ImageListView: UICollectionViewDelegateFlowLayout {

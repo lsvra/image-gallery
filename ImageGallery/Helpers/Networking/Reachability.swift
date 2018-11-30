@@ -4,7 +4,6 @@
 //
 //  Code taken from https://stackoverflow.com/a/30743763
 //
-//
 
 import Foundation
 import SystemConfiguration

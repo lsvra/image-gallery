@@ -25,14 +25,19 @@ class ImageListView: UIViewController {
     var itemsPerRow: Int = 2
     let sectionInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
     
+    var images: [ImageReference] = [ImageReference]()
+    
+    let loadingQueue = OperationQueue()
+    var loadingOperations: [IndexPath: DataLoadOperation] = [:]
+    
     //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.register(UINib(nibName: ImageCell.nibName, bundle: nil),
-                                forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
+        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
         
         collectionView.delegate = self
+        collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         
         labelEmpty.text = "table_empty".overrideLocalizedString()
@@ -41,6 +46,7 @@ class ImageListView: UIViewController {
 
 //MARK: ImageListViewProtocol Delegate
 extension ImageListView: ImageListViewProtocol {
+    
     func displayError(title: String, message: String) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -52,19 +58,23 @@ extension ImageListView: ImageListViewProtocol {
     }
     
     
-    func displayImageList(dataSource: UICollectionViewDataSource) {
+    func displayImageList(images: [ImageReference]) {
+        
+        self.images = images
         
         DispatchQueue.main.async {
-            self.collectionView.dataSource = dataSource
             self.collectionView.reloadData()
             self.labelEmpty.isHidden = true
-            self.view.layoutIfNeeded()
         }
     }
     
-    func updateImageList() {
+    func updateImageList(images: [ImageReference]) {
+        
+        self.images.append(contentsOf: images)
+        
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
     }
 }
+
