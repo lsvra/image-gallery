@@ -14,7 +14,7 @@ class ImageListInteractor {
     
     private var page: Int = 1
     private var tag: String = ""
-    let loadingQueue = OperationQueue()
+    private let queue = OperationQueue()
 }
 
 extension ImageListInteractor: ImageListInteractorProtocol {
@@ -55,7 +55,7 @@ extension ImageListInteractor: ImageListInteractorProtocol {
             }
         }
         
-        loadingQueue.addOperation(dataLoader)
+        queue.addOperation(dataLoader)
     }
     
     func requestNextPage() {
@@ -92,6 +92,6 @@ extension ImageListInteractor: ImageListInteractorProtocol {
             }
         }
 
-        loadingQueue.addOperation(dataLoader)
+        queue.addOperation(dataLoader)
     }
 }

@@ -47,7 +47,7 @@ class ImageListRouter: ImageListRouterProtocol {
         return viewController
     }
     
-    func openSingleImage(urlString: String) {
-        delegate?.openSingleImage(urlString: urlString)
+    func openSingleImage(url: URL) {
+        delegate?.openSingleImage(url: url)
     }
 }

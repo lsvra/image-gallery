@@ -11,7 +11,7 @@ import Foundation
 // Constants that are used more than once
 struct APIConstants {
     
-    fileprivate static let apiKey: String = "dd919992810441c7c24164a0b11f8b56"
+    fileprivate static let apiKey: String = "00dc466739fdfb9e7fb808e65ef19312"
     
     fileprivate static let scheme: String = "https"
     fileprivate static let host: String = "api.flickr.com"

@@ -25,11 +25,11 @@ extension ImageListPresenter: ImageListPresenterProtocol {
         interactor?.requestNextPage()
     }
     
-    func showSingleImage(index: Int) {
+    func showSingleImage(item: ImageReference) {
         
-//        if let urlString = dataSource.images[index].size?.last?.source {
-//            router?.openSingleImage(urlString: urlString)
-//        }
+        if let url = item.flickrImageURL() {
+            router?.openSingleImage(url: url)
+        }
     }
 }
 
@@ -43,6 +43,7 @@ extension ImageListPresenter: ImageListOutputProtocol{
     }
     
     func updateImageList(page: PageEntity) {
+        
         let imagesArray: [ImageReference] = page.photos.photo
         
         view?.updateImageList(images: imagesArray)
@@ -50,7 +51,7 @@ extension ImageListPresenter: ImageListOutputProtocol{
     
     func presentError(error: Error) {
         
-        let title: String = "error_title".overrideLocalizedString()
+        let title: String = "error_title".localized()
         let message: String = error.localizedDescription
         
         view?.displayError(title: title, message: message)

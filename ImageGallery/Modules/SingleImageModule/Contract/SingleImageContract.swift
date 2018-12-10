@@ -37,7 +37,7 @@ protocol SingleImagePresenterProtocol: class {
 protocol SingleImageOutputProtocol: class {
     
     func presentImage(data: Data)
-    func presentError(error: NSError)
+    func presentError(error: Error)
 }
 
 //MARK: Interactor

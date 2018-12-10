@@ -11,7 +11,7 @@ import UIKit
 extension ImageListView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return items.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {

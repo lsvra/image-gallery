@@ -11,7 +11,7 @@ import UIKit
 
 //MARK: Router
 protocol ImageListRouterProtocol: class {
-    func openSingleImage(urlString: String)
+    func openSingleImage(url: URL)
 }
 
 //MARK: View
@@ -35,7 +35,7 @@ protocol ImageListPresenterProtocol: class {
     
     func showImageList(tag: String)
     func showImageListNextPage()
-    func showSingleImage(index: Int)
+    func showSingleImage(item: ImageReference)
 }
 
 //MARK: Presenter Output

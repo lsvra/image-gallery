@@ -10,53 +10,46 @@ import UIKit
 
 extension ImageListView: UICollectionViewDelegate {
     
-    public func loadData(at index: Int) -> DataLoadOperation? {
-        
-        if (0..<images.count).contains(index) {
-            if let url = images[index].flickrImageURL(){
-                return DataLoadOperation(url: url, session: .shared)
-            }
-        }
-        
-        return .none
-    }
-    
-    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         guard let cell = cell as? ImageCell else {
             return
         }
         
-        // 1
-        let updateCellClosure: (Data?, URLResponse?, Error?) -> Void = { [weak self] data, response, error in
+        let closure: (Data?, URLResponse?, Error?) -> Void = { [weak self] data, response, error in
             
             guard let self = self else {
                 return
             }
             
-            cell.setup(data: data!)
+            if let data = data {
+                cell.setup(data: data)
+            }
+            
             self.loadingOperations.removeValue(forKey: indexPath)
         }
         
-        // 2
+        // When the cell is near the end of the array, there's a need for a new network request
+        if indexPath.item == items.count - threshold {
+            presenter?.showImageListNextPage()
+        }
+        
         if let dataLoader = loadingOperations[indexPath] {
-            // 3
+            
             if let data = dataLoader.data {
                 cell.setup(data: data)
                 loadingOperations.removeValue(forKey: indexPath)
             } else {
-                // 4
-                dataLoader.completion = updateCellClosure
+                dataLoader.completion = closure
             }
         } else {
-            // 5
+            
             if let dataLoader = loadData(at: indexPath.item) {
-                // 6
-                dataLoader.completion = updateCellClosure
-                // 7
-                loadingQueue.addOperation(dataLoader)
-                // 8
+                
+                dataLoader.completion = closure
+                
+                queue.addOperation(dataLoader)
+
                 loadingOperations[indexPath] = dataLoader
             }
         }
@@ -71,6 +64,12 @@ extension ImageListView: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        presenter?.showSingleImage(index: indexPath.item)
+       
+        
+        let index = indexPath.item
+        
+        if (0..<items.count).contains(index) {
+            presenter?.showSingleImage(item: items[index])
+        }
     }
 }

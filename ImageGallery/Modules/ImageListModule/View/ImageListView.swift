@@ -25,10 +25,11 @@ class ImageListView: UIViewController {
     var itemsPerRow: Int = 2
     let sectionInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
     
-    var images: [ImageReference] = [ImageReference]()
+    var items: [ImageReference] = [ImageReference]()
     
-    let loadingQueue = OperationQueue()
+    let queue = OperationQueue()
     var loadingOperations: [IndexPath: DataLoadOperation] = [:]
+    let threshold: Int = 20
     
     //MARK: Lifecycle
     override func viewDidLoad() {
@@ -40,7 +41,18 @@ class ImageListView: UIViewController {
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         
-        labelEmpty.text = "table_empty".overrideLocalizedString()
+        labelEmpty.text = "table_empty".localized()
+    }
+    
+    public func loadData(at index: Int) -> DataLoadOperation? {
+        
+        if (0..<items.count).contains(index) {
+            if let url = items[index].flickrImageURL(){
+                return DataLoadOperation(url: url, session: .shared)
+            }
+        }
+        
+        return nil
     }
 }
 
@@ -50,7 +62,7 @@ extension ImageListView: ImageListViewProtocol {
     func displayError(title: String, message: String) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "error_action_ok".overrideLocalizedString(),
+        alert.addAction(UIAlertAction(title: "error_action_ok".localized(),
                                       style: .default,
                                       handler: nil))
         
@@ -60,7 +72,7 @@ extension ImageListView: ImageListViewProtocol {
     
     func displayImageList(images: [ImageReference]) {
         
-        self.images = images
+        self.items = images
         
         DispatchQueue.main.async {
             self.collectionView.reloadData()
@@ -70,7 +82,7 @@ extension ImageListView: ImageListViewProtocol {
     
     func updateImageList(images: [ImageReference]) {
         
-        self.images.append(contentsOf: images)
+        self.items.append(contentsOf: images)
         
         DispatchQueue.main.async {
             self.collectionView.reloadData()

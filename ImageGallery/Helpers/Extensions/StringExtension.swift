@@ -9,7 +9,7 @@
 import Foundation
 
 extension String {
-    func overrideLocalizedString() -> String {
+    func localized() -> String {
         return NSLocalizedString(self, comment: "")
     }
 }

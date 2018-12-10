@@ -46,9 +46,9 @@ class Router {
 
 extension Router: RouterCommunicationProtocol {
     
-    func openSingleImage(urlString: String) {
+    func openSingleImage(url: URL) {
         
-        if let module = SingleImageRouter.setupModule(imageUrl: urlString) {
+        if let module = SingleImageRouter.setupModule(url: url) {
             baseViewController?.push(viewController: module)
         }
     }

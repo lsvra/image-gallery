@@ -11,5 +11,5 @@ import Foundation
 //MARK: Protocol to be used in communications of type (ModuleRouter -> Router)
 protocol RouterCommunicationProtocol {
     
-    func openSingleImage(urlString: String)
+    func openSingleImage(url: URL)
 }

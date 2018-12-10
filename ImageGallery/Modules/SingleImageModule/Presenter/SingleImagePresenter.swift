@@ -35,9 +35,9 @@ extension SingleImagePresenter: SingleImageOutputProtocol{
         view?.displayImage(image: image)
     }
     
-    func presentError(error: NSError) {
-        let title: String = "error_title".overrideLocalizedString()
-        let message: String = error.localizedFailureReason?.overrideLocalizedString() ?? ""
+    func presentError(error: Error) {
+        let title: String = "error_title".localized()
+        let message: String = error.localizedDescription
         
         view?.displayError(title: title, message: message)
     }

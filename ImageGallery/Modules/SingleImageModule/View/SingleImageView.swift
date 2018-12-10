@@ -41,7 +41,6 @@ class SingleImageView: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        showLoader()
         presenter?.showImage()
     }
     
@@ -54,41 +53,12 @@ class SingleImageView: UIViewController {
         })
         
     }
-    
-    //MARK: Loaders
-    func showLoader() {
-        
-        loader = UIView(frame: imageView.bounds)
-        
-        guard let loader = loader else {
-            return
-        }
-        
-        let activityIndicator = UIActivityIndicatorView(style: .gray)
-        
-        activityIndicator.startAnimating()
-        activityIndicator.center = loader.center
-        
-        DispatchQueue.main.async {
-            
-            loader.addSubview(activityIndicator)
-            self.imageView.addSubview(loader)
-        }
-    }
-    
-    func hideLoader() {
-        
-        DispatchQueue.main.async {
-            self.loader?.removeFromSuperview()
-        }
-    }
 }
 
 //MARK: SingleImageViewProtocol Delegate
 extension SingleImageView: UIScrollViewDelegate  {
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-
         return imageView
     }
 }
@@ -97,14 +67,15 @@ extension SingleImageView: UIScrollViewDelegate  {
 extension SingleImageView: SingleImageViewProtocol {
     
     func displayImage(image: UIImage) {
-        hideLoader()
-        imageView.image = image
+        DispatchQueue.main.async {
+            self.imageView.image = image
+        }
     }
     
     func displayError(title: String, message: String) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "error_action_ok".overrideLocalizedString(),
+        alert.addAction(UIAlertAction(title: "error_action_ok".localized(),
                                       style: .default,
                                       handler: nil))
         

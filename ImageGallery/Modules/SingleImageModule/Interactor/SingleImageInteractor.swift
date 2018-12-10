@@ -11,28 +11,38 @@ import Foundation
 class SingleImageInteractor {
     weak var output: SingleImageOutputProtocol?
     
-    let imageUrl: String
+    private let url: URL
+    private let queue = OperationQueue()
     
-    init(imageUrl: String) {
-        self.imageUrl = imageUrl
+    init(url: URL) {
+        self.url = url
     }
 }
 
 extension SingleImageInteractor: SingleImageInteractorProtocol {
     
     func requestImage() {
-//        RequestsManager.shared.getImage(imageUrl, completion: { data, error in
-//            
-//            if let error = error {
-//                self.output?.presentError(error: error)
-//                return
-//            }
-//            
-//            guard let data = data else {
-//                return
-//            }
-//            
-//            self.output?.presentImage(data: data)
-//        })
+        
+        let dataLoader = DataLoadOperation(url: url, session: .shared)
+        
+        dataLoader.completion = { [weak self] data, response, error in
+            
+            guard let self = self else {
+                return
+            }
+            
+            if let error = error {
+                self.output?.presentError(error: error)
+                return
+            }
+            
+            guard let data = data else {
+                return
+            }
+            
+            self.output?.presentImage(data: data)
+        }
+        
+        queue.addOperation(dataLoader)
     }
 }

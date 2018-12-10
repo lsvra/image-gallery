@@ -13,7 +13,7 @@ class SingleImageRouter: SingleImageRouterProtocol {
     
     weak var viewController: UIViewController?
     
-    static func setupModule(imageUrl: String) -> UIViewController? {
+    static func setupModule(url: URL) -> UIViewController? {
         
         //Get the Storyboard
         let storyBoard = UIStoryboard(name: SingleImageView.storyboard, bundle: nil)
@@ -24,7 +24,7 @@ class SingleImageRouter: SingleImageRouterProtocol {
             return nil
         }
         
-        let interactor = SingleImageInteractor(imageUrl: imageUrl)
+        let interactor = SingleImageInteractor(url: url)
         let router = SingleImageRouter()
         let presenter = SingleImagePresenter()
         
