@@ -9,21 +9,21 @@
 import Foundation
 
 class SingleImageInteractor {
+    
     weak var output: SingleImageOutputProtocol?
     
-    private let url: URL
-    private let queue = OperationQueue()
+    private let dataLoader: DataLoadOperation
+    private let queue: OperationQueue
     
-    init(url: URL) {
-        self.url = url
+    init(queue: OperationQueue, dataLoader: DataLoadOperation) {
+        self.queue = queue
+        self.dataLoader = dataLoader
     }
 }
 
 extension SingleImageInteractor: SingleImageInteractorProtocol {
     
     func requestImage() {
-        
-        let dataLoader = DataLoadOperation(url: url, session: .shared)
         
         dataLoader.completion = { [weak self] data, response, error in
             
@@ -32,7 +32,7 @@ extension SingleImageInteractor: SingleImageInteractorProtocol {
             }
             
             if let error = error {
-                self.output?.presentError(error: error)
+                self.output?.presentError(error)
                 return
             }
             

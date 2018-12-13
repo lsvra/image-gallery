@@ -11,30 +11,27 @@ import UIKit
 
 //MARK: Router
 protocol ImageListRouterProtocol: class {
-    func openSingleImage(url: URL)
+    //Empty
 }
 
 //MARK: View
 protocol ImageListViewProtocol: class {
-
-    var presenter: ImageListPresenterProtocol?      { get set }
     
-    func displayImageList(images: [ImageReference])
-    func updateImageList(images: [ImageReference])
+    var presenter: ImageListPresenterProtocol?      { get }
     
+    func displayImageList(images: [ImageReference], append: Bool)
+    func displaySingleImage(_ viewController: UIViewController)
     func displayError(title: String, message: String)
-
 }
 
 //MARK: Presenter Input
 protocol ImageListPresenterProtocol: class {
     
-    var view: ImageListViewProtocol?                { get set }
-    var interactor: ImageListInteractorProtocol?    { get set }
-    var router: ImageListRouterProtocol?            { get set }
+    var view: ImageListViewProtocol?                { get }
+    var interactor: ImageListInteractorProtocol?    { get }
+    var router: ImageListRouterProtocol?            { get }
     
-    func showImageList(tag: String)
-    func showImageListNextPage()
+    func showImageList(tag: String, page: Int)
     func showSingleImage(item: ImageReference)
 }
 
@@ -44,16 +41,15 @@ protocol ImageListOutputProtocol: class {
     func presentImageList(page: PageEntity)
     func updateImageList(page: PageEntity)
     
-    func presentError(error: Error)
+    func presentError(_ error: Error)
 }
 
 //MARK: Interactor
 protocol ImageListInteractorProtocol: class {
     
-    var output: ImageListOutputProtocol?      { get set }
+    var output: ImageListOutputProtocol?      { get }
     
-    func requestImageList(tag: String)
-    func requestNextPage()
+    func requestImageList(tag: String?, page: Int)
 }
 
 

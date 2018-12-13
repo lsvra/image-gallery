@@ -8,6 +8,8 @@
 
 import Foundation
 
+let cache = NSCache<NSString, NSData>()
+
 class DataLoadOperation: Operation {
     
     var data: Data?
@@ -21,7 +23,18 @@ class DataLoadOperation: Operation {
         self.session = session
     }
     
+    // TODO: Implement Reachability
+    
     override func main() {
+        
+        // Use data from cache if available
+        if let cachedData = cache.object(forKey: url.absoluteString as NSString),
+            let completion = self.completion {
+            
+                data = Data(referencing: cachedData)
+                completion(data, nil, nil)
+                return
+        }
         
         if isCancelled {
             return
@@ -35,6 +48,12 @@ class DataLoadOperation: Operation {
                 return
             }
             
+            // Cache data for future use
+            if let data = data {
+                let dataToCache = NSData(data: data)
+                cache.setObject(dataToCache, forKey: self.url.absoluteString as NSString)
+            }
+
             self.data = data
         
             if let completion = self.completion {

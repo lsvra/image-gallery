@@ -11,13 +11,13 @@ import UIKit
 
 //MARK: Router
 protocol SingleImageRouterProtocol: class {
-    
+    // Empty
 }
 
 //MARK: View
 protocol SingleImageViewProtocol: class {
     
-    var presenter: SingleImagePresenterProtocol?      { get set }
+    var presenter: SingleImagePresenterProtocol?      { get }
     
     func displayImage(image: UIImage)
     func displayError(title: String, message: String)
@@ -26,9 +26,9 @@ protocol SingleImageViewProtocol: class {
 //MARK: Presenter Input
 protocol SingleImagePresenterProtocol: class {
     
-    var view: SingleImageViewProtocol?                { get set }
-    var interactor: SingleImageInteractorProtocol?    { get set }
-    var router: SingleImageRouterProtocol?            { get set }
+    var view: SingleImageViewProtocol?                  { get }
+    var interactor: SingleImageInteractorProtocol?      { get }
+    var router: SingleImageRouterProtocol?              { get }
     
     func showImage()
 }
@@ -37,13 +37,13 @@ protocol SingleImagePresenterProtocol: class {
 protocol SingleImageOutputProtocol: class {
     
     func presentImage(data: Data)
-    func presentError(error: Error)
+    func presentError(_ error: Error)
 }
 
 //MARK: Interactor
 protocol SingleImageInteractorProtocol: class {
     
-    var output: SingleImageOutputProtocol?      { get set }
+    var output: SingleImageOutputProtocol?      { get }
     
     func requestImage()
 }

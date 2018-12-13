@@ -19,7 +19,6 @@ class SingleImagePresenter {
 extension SingleImagePresenter: SingleImagePresenterProtocol{
     
     func showImage() {
-        
         interactor?.requestImage()
     }
 }
@@ -35,7 +34,7 @@ extension SingleImagePresenter: SingleImageOutputProtocol{
         view?.displayImage(image: image)
     }
     
-    func presentError(error: Error) {
+    func presentError(_ error: Error) {
         let title: String = "error_title".localized()
         let message: String = error.localizedDescription
         

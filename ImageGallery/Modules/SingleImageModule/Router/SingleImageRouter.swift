@@ -11,37 +11,29 @@ import UIKit
 
 class SingleImageRouter: SingleImageRouterProtocol {
     
-    weak var viewController: UIViewController?
-    
-    static func setupModule(url: URL) -> UIViewController? {
+    static func setupModule(url: URL) -> UIViewController {
         
-        //Get the Storyboard
-        let storyBoard = UIStoryboard(name: SingleImageView.storyboard, bundle: nil)
-        let viewController = storyBoard.instantiateViewController(withIdentifier: SingleImageView.identifier)
+        // Create DI classes
+        let queue = OperationQueue()
+        let dataLoader = DataLoadOperation(url: url, session: .shared)
         
-        //Create VIPER files
-        guard let view = viewController as? SingleImageView else {
-            return nil
-        }
-        
-        let interactor = SingleImageInteractor(url: url)
+        // Create VIPER classes
+        let view = SingleImageView()
+        let interactor = SingleImageInteractor(queue: queue, dataLoader: dataLoader)
         let router = SingleImageRouter()
         let presenter = SingleImagePresenter()
         
-        //Connect View
+        // Connect View
         view.presenter = presenter
         
-        //Connect Presenter
+        // Connect Presenter
         presenter.view = view
         presenter.interactor = interactor
         presenter.router = router
         
-        //Connect Interactor
+        // Connect Interactor
         interactor.output = presenter
         
-        //Connect Router
-        router.viewController = viewController
-        
-        return viewController
+        return view
     }
 }

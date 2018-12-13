@@ -11,7 +11,7 @@ import Foundation
 // Constants that are used more than once
 struct APIConstants {
     
-    fileprivate static let apiKey: String = "00dc466739fdfb9e7fb808e65ef19312"
+    fileprivate static let apiKey: String = "API_KEY_HERE"
     
     fileprivate static let scheme: String = "https"
     fileprivate static let host: String = "api.flickr.com"
@@ -39,14 +39,14 @@ extension Endpoint {
 }
 
 extension Endpoint {
-    static func search(for tag: String, page: String) -> Endpoint {
+    static func search(for tag: String, page: Int) -> Endpoint {
         
         return Endpoint(
             path: APIConstants.path,
             queryItems: [URLQueryItem(name: "method", value: "flickr.photos.search"),
                          URLQueryItem(name: "api_key", value: APIConstants.apiKey),
                          URLQueryItem(name: "tags", value: tag),
-                         URLQueryItem(name: "page", value: page),
+                         URLQueryItem(name: "page", value: String(describing: page)),
                          URLQueryItem(name: "format", value: APIConstants.format),
                          URLQueryItem(name: "nojsoncallback", value: APIConstants.noJsonCallback)])
     }

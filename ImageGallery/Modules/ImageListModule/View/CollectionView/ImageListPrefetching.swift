@@ -10,12 +10,11 @@ import UIKit
 
 extension ImageListView: UICollectionViewDataSourcePrefetching {
 
-
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         
         for indexPath in indexPaths {
             
-            if let _ = loadingOperations[indexPath] {
+            if loadingOperations[indexPath] != nil {
                 continue
             }
             

@@ -25,7 +25,19 @@ struct ImageReference: Decodable {
 }
 
 extension ImageReference {
-    func flickrImageURL(_ size: String = "m") -> URL? {
-        return URL(string: "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret)_\(size).jpg")
+    
+    enum Size: String {
+        case square = "sq"
+        case largeSquare = "q"
+        case thumbnail = "t"
+        case small = "s"
+        case medium = "m"
+        case mediumHigh = "c"
+        case large = "l"
+        case original = "o"
+    }
+    
+    func imageURL(_ size: Size) -> URL? {
+        return URL(string: "https://farm\(farm).staticflickr.com/\(server)/\(id)_\(secret)_\(size.rawValue).jpg")
     }
 }

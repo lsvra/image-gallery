@@ -12,25 +12,32 @@ class ImageListInteractor {
     
     weak var output: ImageListOutputProtocol?
     
-    private var page: Int = 1
     private var tag: String = ""
-    private let queue = OperationQueue()
+    
+    private var queue: OperationQueue
+    private var session: URLSession
+    
+    init(queue: OperationQueue, session: URLSession) {
+        self.queue = queue
+        self.session = session
+    }
 }
 
 extension ImageListInteractor: ImageListInteractorProtocol {
 
-    func requestImageList(tag: String) {
+    func requestImageList(tag: String?, page: Int) {
         
-        self.tag = tag
-        page = 1
+        if let tag = tag {
+            self.tag = tag
+        }
         
-        let endpoint = Endpoint.search(for: tag, page: String(describing: page))
+        let endpoint = Endpoint.search(for: self.tag, page: page)
         
         guard let url = endpoint.url else {
             return
         }
         
-        let dataLoader = DataLoadOperation(url: url, session: .shared)
+        let dataLoader = DataLoadOperation(url: url, session: session)
         
         dataLoader.completion = { [weak self] data, response, error in
             
@@ -39,59 +46,27 @@ extension ImageListInteractor: ImageListInteractorProtocol {
             }
             
             if let error = error {
-                self.output?.presentError(error: error)
+                self.output?.presentError(error)
                 return
             }
             
             if let data = data {
                 do {
                     let result = try JSONDecoder().decode(PageEntity.self, from: data)
-                    self.output?.presentImageList(page: result)
                     
-                } catch let error {
-                    self.output?.presentError(error: error)
-                    return
-                }
-            }
-        }
-        
-        queue.addOperation(dataLoader)
-    }
-    
-    func requestNextPage() {
-        page = page + 1
-        
-        let endpoint = Endpoint.search(for: tag, page: String(describing: page))
-
-        guard let url = endpoint.url else {
-            return
-        }
-        
-        let dataLoader = DataLoadOperation(url: url, session: .shared)
-        
-        dataLoader.completion = { [weak self] data, response, error in
-            
-            guard let self = self else {
-                return
-            }
-            
-            if let error = error {
-                self.output?.presentError(error: error)
-                return
-            }
-            
-            if let data = data {
-                do {
-                    let result = try JSONDecoder().decode(PageEntity.self, from: data)
+                    if page == 1 {
+                        self.output?.presentImageList(page: result)
+                        return
+                    }
+                    
                     self.output?.updateImageList(page: result)
                     
                 } catch let error {
-                    self.output?.presentError(error: error)
-                    return
+                    self.output?.presentError(error)
                 }
             }
         }
-
+        
         queue.addOperation(dataLoader)
     }
 }

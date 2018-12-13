@@ -11,21 +11,15 @@ import UIKit
 
 class ImageListRouter: ImageListRouterProtocol {
 
-    weak var viewController: UIViewController?
-    var delegate: RouterCommunicationProtocol?
-
-    static func setupModule(delegate: RouterCommunicationProtocol) -> UIViewController? {
+    static func setupModule() -> UIViewController {
         
-        //Get the Storyboard
-        let storyBoard = UIStoryboard(name: ImageListView.storyboard, bundle: nil)
-        let viewController = storyBoard.instantiateViewController(withIdentifier: ImageListView.identifier)
+        //Create DI classes
+        let queue = OperationQueue()
+        let session = URLSession.shared
         
-        //Create VIPER files
-        guard let view = viewController as? ImageListView else {
-            return nil
-        }
-        
-        let interactor = ImageListInteractor()
+        //Create VIPER classes
+        let view = ImageListView()
+        let interactor = ImageListInteractor(queue: queue, session: session)
         let router = ImageListRouter()
         let presenter = ImageListPresenter()
     
@@ -39,15 +33,7 @@ class ImageListRouter: ImageListRouterProtocol {
         
         //Connect Interactor
         interactor.output = presenter
-        
-        //Connect Router
-        router.viewController = viewController
-        router.delegate = delegate
     
-        return viewController
-    }
-    
-    func openSingleImage(url: URL) {
-        delegate?.openSingleImage(url: url)
+        return view
     }
 }

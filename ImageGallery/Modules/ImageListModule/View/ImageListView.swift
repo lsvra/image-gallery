@@ -12,16 +12,12 @@ import UIKit
 class ImageListView: UIViewController {
     
     //MARK: IBOutlets
-    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var labelEmpty: UILabel!
     
     //MARK: VIPER Protocols
     var presenter: ImageListPresenterProtocol?
     
-    //MARK: Vars
-    static let identifier: String = "ImageListView"
-    static let storyboard: String = "ImageList"
-    
+    //MARK: Vars    
     var itemsPerRow: Int = 2
     let sectionInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
     
@@ -31,23 +27,53 @@ class ImageListView: UIViewController {
     var loadingOperations: [IndexPath: DataLoadOperation] = [:]
     let threshold: Int = 20
     
-    //MARK: Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    lazy var searchController: UISearchController = {
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.dimsBackgroundDuringPresentation = true
+        
+        searchController.searchBar.placeholder = "Search"
+        searchController.searchBar.delegate = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.searchBarStyle = .minimal
+        
+        return searchController
+    }()
+    
+    lazy var collectionView: UICollectionView = {
+        
+        let collectionView = UICollectionView(frame: self.view.frame,
+                                              collectionViewLayout: UICollectionViewFlowLayout())
         
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
+        
+        collectionView.backgroundColor = .white
         
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         
-        labelEmpty.text = "table_empty".localized()
-    }
+        return collectionView
+    }()
     
+    //MARK: Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.navigationItem.titleView = searchController.searchBar
+        self.definesPresentationContext = true
+        
+        self.view.addSubview(collectionView)
+    }
+
+    //TODO: Remove this method from the view
     public func loadData(at index: Int) -> DataLoadOperation? {
         
         if (0..<items.count).contains(index) {
-            if let url = items[index].flickrImageURL(){
+            if let url = items[index].imageURL(.largeSquare){
                 return DataLoadOperation(url: url, session: .shared)
             }
         }
@@ -59,6 +85,23 @@ class ImageListView: UIViewController {
 //MARK: ImageListViewProtocol Delegate
 extension ImageListView: ImageListViewProtocol {
     
+    func displayImageList(images: [ImageReference], append: Bool) {
+        
+        if append {
+            self.items.append(contentsOf: images)
+        } else {
+            self.items = images
+        }
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+    
+    func displaySingleImage(_ viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     func displayError(title: String, message: String) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -68,25 +111,4 @@ extension ImageListView: ImageListViewProtocol {
         
         self.present(alert, animated: true, completion: nil)
     }
-    
-    
-    func displayImageList(images: [ImageReference]) {
-        
-        self.items = images
-        
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-            self.labelEmpty.isHidden = true
-        }
-    }
-    
-    func updateImageList(images: [ImageReference]) {
-        
-        self.items.append(contentsOf: images)
-        
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-        }
-    }
 }
-

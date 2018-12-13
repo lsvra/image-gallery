@@ -30,8 +30,10 @@ extension ImageListView: UICollectionViewDelegate {
         }
         
         // When the cell is near the end of the array, there's a need for a new network request
-        if indexPath.item == items.count - threshold {
-            presenter?.showImageListNextPage()
+        if isRequestNeeded(index: indexPath.item, numberOfItems: items.count, threshold: threshold) {
+
+            let pageNumber = getPageNumber(for: items.count, elementsPerPage: 100)
+            presenter?.showImageList(tag: " ", page: pageNumber)
         }
         
         if let dataLoader = loadingOperations[indexPath] {
@@ -65,11 +67,20 @@ extension ImageListView: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
        
-        
         let index = indexPath.item
-        
-        if (0..<items.count).contains(index) {
+     
+        if items.count > index {
             presenter?.showSingleImage(item: items[index])
         }
+    }
+    
+    // If the index to be shown is below a certain threshold, the method returns true
+    private func isRequestNeeded(index: Int, numberOfItems: Int, threshold: Int) -> Bool{
+        return index == items.count - threshold
+    }
+    
+    // Returns the next correct page number for a certain number of elements to be shown
+    private func getPageNumber(for numberOfElements: Int, elementsPerPage: Int) -> Int {
+        return (numberOfElements / elementsPerPage) + 1
     }
 }
