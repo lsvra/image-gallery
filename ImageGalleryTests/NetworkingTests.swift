@@ -2,7 +2,7 @@
 //  NetworkingTests.swift
 //  ImageGalleryTests
 //
-//  Created by FYI Admin on 18/12/2018.
+//  Created by Luís Vieira on 18/12/2018.
 //  Copyright © 2018 Luís Vieira. All rights reserved.
 //
 
